@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">NYTSearchEngine</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="filter_search">Search</string>
+    <string name="enter_begin_date">Enter Begin Date</string>
+    <string name="desk_arts">Arts</string>
+    <string name="desk_fashion">Fashion &amp; Style</string>
+    <string name="desk_sports">Sports</string>
+</resources>
