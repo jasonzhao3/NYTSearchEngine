@@ -2,9 +2,9 @@ package com.uber.yangz.nytsearchengine.fragments;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +22,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class FilterDialogFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener  {
-    private static final String ARG_TITLE = "title";
+    private static final String ARG_FILTER_SETTING = "filter_setting";
+    private static final String DESK_VALUE_ARTS = "Arts";
+    private static final String DESK_VALUE_FASHION = "Fashion & Style";
+    private static final String DESK_VALUE_SPORTS = "Sports";
+
 
     private TextView tvBeginDate;
     private Spinner spSortOrder;
@@ -38,10 +42,10 @@ public class FilterDialogFragment extends DialogFragment implements DatePickerDi
         // Required empty public constructor
     }
 
-    public static FilterDialogFragment newInstance(String title) {
+    public static FilterDialogFragment newInstance(@NonNull FilterSetting filterSetting) {
         FilterDialogFragment fragment = new FilterDialogFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_TITLE, title);
+        args.putParcelable(ARG_FILTER_SETTING, filterSetting);
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,10 +75,30 @@ public class FilterDialogFragment extends DialogFragment implements DatePickerDi
 
 
         // Fetch arguments from bundle and set title
-        String title = getArguments().getString(ARG_TITLE);
-        getDialog().setTitle(title);
+        filterSetting = getArguments().getParcelable(ARG_FILTER_SETTING);
 
-        filterSetting = new FilterSetting();
+        if (filterSetting.getBeginDateStr() != null) {
+            tvBeginDate.setText(filterSetting.getBeginDateStr());
+        }
+
+        if (filterSetting.getSortOrder() != null) {
+            // TODO: refactor to make it nicer
+            spSortOrder.setSelection(0, true);
+        }
+
+        if (filterSetting.getDeskValues() != null) {
+            for (String value : filterSetting.getDeskValues()) {
+                if (value.equals(DESK_VALUE_ARTS)) {
+                    cbArts.setChecked(true);
+                }
+                if (value.equals(DESK_VALUE_FASHION)) {
+                    cbFashion.setChecked(true);
+                }
+                if (value.equals(DESK_VALUE_SPORTS)) {
+                    cbSports.setChecked(true);
+                }
+            }
+        }
 
         tvBeginDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,13 +125,13 @@ public class FilterDialogFragment extends DialogFragment implements DatePickerDi
         ArrayList<String> deskValues = new ArrayList<>();
         // TODO: refactor this series of ifs to make it more scalable
         if (cbArts.isChecked()) {
-            deskValues.add("Arts");
+            deskValues.add(DESK_VALUE_ARTS);
         }
         if (cbFashion.isChecked()) {
-            deskValues.add("Fashion & Style");
+            deskValues.add(DESK_VALUE_FASHION);
         }
         if (cbSports.isChecked()) {
-            deskValues.add("Sports");
+            deskValues.add(DESK_VALUE_SPORTS);
         }
         filterSetting.setDeskValues(deskValues);
     }

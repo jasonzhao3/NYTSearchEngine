@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -59,7 +58,7 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogFra
 
     private void showFilterDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        FilterDialogFragment filterDialogFragment = FilterDialogFragment.newInstance("Edit Filter");
+        FilterDialogFragment filterDialogFragment = FilterDialogFragment.newInstance(filterSetting);
         filterDialogFragment.show(fm, "fragment_filter");
     }
 
@@ -145,15 +144,15 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogFra
     }
 
     private void populateFilterParams(RequestParams params) {
-        if (!TextUtils.isEmpty(filterSetting.getBeginDateStr())) {
+        if (filterSetting.getBeginDateStr() != null) {
             params.put("begin_date", filterSetting.getBeginDateStr());
         }
 
-        if (!TextUtils.isEmpty(filterSetting.getSortOrder())) {
+        if (filterSetting.getSortOrder() != null) {
             params.put("sort", filterSetting.getSortOrder());
         }
 
-        if (!TextUtils.isEmpty(filterSetting.getDeskValuesStr())) {
+        if (filterSetting.getDeskValuesStr() != null) {
             params.put("fq", filterSetting.getDeskValuesStr());
         }
     }
