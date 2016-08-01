@@ -24,6 +24,7 @@ import java.util.Calendar;
 
 public class FilterDialogFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener  {
     private static final String ARG_FILTER_SETTING = "filter_setting";
+    private static final String SORT_ORDER_OLDEST = "oldest";
     private static final String DESK_VALUE_ARTS = "Arts";
     private static final String DESK_VALUE_FASHION = "Fashion & Style";
     private static final String DESK_VALUE_SPORTS = "Sports";
@@ -118,6 +119,7 @@ public class FilterDialogFragment extends DialogFragment implements DatePickerDi
         // Fetch arguments from bundle and set title
         filterSetting = getArguments().getParcelable(ARG_FILTER_SETTING);
 
+        // TODO: refactor to make it nicer
         if (filterSetting.getSearchStr() != null) {
             String searchStr = filterSetting.getSearchStr();
             etSeachStr.setText(searchStr);
@@ -128,8 +130,11 @@ public class FilterDialogFragment extends DialogFragment implements DatePickerDi
             tvBeginDate.setText(filterSetting.getBeginDateStr());
         }
         if (filterSetting.getSortOrder() != null) {
-            // TODO: refactor to make it nicer
-            spSortOrder.setSelection(0, true);
+            if (filterSetting.getSortOrder().equals(SORT_ORDER_OLDEST)) {
+                spSortOrder.setSelection(0, true);
+            } else {
+                spSortOrder.setSelection(1, true);
+            }
         }
         if (filterSetting.getDeskValues() != null) {
             for (String value : filterSetting.getDeskValues()) {

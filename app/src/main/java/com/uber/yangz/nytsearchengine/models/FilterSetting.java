@@ -45,7 +45,7 @@ public class FilterSetting implements Parcelable {
 
     public String getBeginDateStr() {
         if (beginDate != null) {
-            String myFormat = "MM/dd/yy"; //In which you need put here
+            String myFormat = "yyyyMMdd";
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
             return sdf.format(beginDate);
         }
