@@ -38,8 +38,6 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogFra
 
     private ArticlesAdaptor adapter;
     private FilterSetting filterSetting;
-    private String query;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +72,7 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogFra
                 // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
                 // see https://code.google.com/p/android/issues/detail?id=24599
                 searchView.clearFocus();
-                SearchActivity.this.query = query;
+                SearchActivity.this.filterSetting.setSearchStr(query);
                 fetchArticles(0);
                 return true;
             }
@@ -92,7 +90,7 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogFra
         RequestParams params = new RequestParams();
         params.put(API_KEY_NAME, API_KEY_VALUE);
         params.put("page", page);
-        params.put("q", query);
+        params.put("q", filterSetting.getSearchStr());
         populateFilterParams(params);
 
         final boolean needClearAdapter = page == 0;
@@ -159,7 +157,7 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogFra
 
     @Override
     public void onFinishFilterDialog(FilterSetting filterSetting) {
-        Log.d("DEBUG", "finish filter dialog setting");
         this.filterSetting = filterSetting;
+        fetchArticles(0);
     }
 }

@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -28,6 +29,7 @@ public class FilterDialogFragment extends DialogFragment implements DatePickerDi
     private static final String DESK_VALUE_SPORTS = "Sports";
 
 
+    private EditText etSeachStr;
     private TextView tvBeginDate;
     private Spinner spSortOrder;
     private CheckBox cbArts;
@@ -66,6 +68,7 @@ public class FilterDialogFragment extends DialogFragment implements DatePickerDi
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        etSeachStr = (EditText) view.findViewById(R.id.et_search_str);
         tvBeginDate = (TextView) view.findViewById(R.id.tv_begin_date);
         spSortOrder = (Spinner) view.findViewById(R.id.sp_sort_order);
         cbArts = (CheckBox) view.findViewById(R.id.cb_arts);
@@ -73,32 +76,7 @@ public class FilterDialogFragment extends DialogFragment implements DatePickerDi
         cbSports = (CheckBox) view.findViewById(R.id.cb_sports);
         btnFilterSearch = (Button) view.findViewById(R.id.btn_filter_search);
 
-
-        // Fetch arguments from bundle and set title
-        filterSetting = getArguments().getParcelable(ARG_FILTER_SETTING);
-
-        if (filterSetting.getBeginDateStr() != null) {
-            tvBeginDate.setText(filterSetting.getBeginDateStr());
-        }
-
-        if (filterSetting.getSortOrder() != null) {
-            // TODO: refactor to make it nicer
-            spSortOrder.setSelection(0, true);
-        }
-
-        if (filterSetting.getDeskValues() != null) {
-            for (String value : filterSetting.getDeskValues()) {
-                if (value.equals(DESK_VALUE_ARTS)) {
-                    cbArts.setChecked(true);
-                }
-                if (value.equals(DESK_VALUE_FASHION)) {
-                    cbFashion.setChecked(true);
-                }
-                if (value.equals(DESK_VALUE_SPORTS)) {
-                    cbSports.setChecked(true);
-                }
-            }
-        }
+        populateUIFields();
 
         tvBeginDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,7 +85,6 @@ public class FilterDialogFragment extends DialogFragment implements DatePickerDi
             }
         });
         tvBeginDate.requestFocus();
-
 
         btnFilterSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,6 +98,7 @@ public class FilterDialogFragment extends DialogFragment implements DatePickerDi
     }
 
     private void populateFilterSetting() {
+        filterSetting.setSearchStr(etSeachStr.getText().toString());
         filterSetting.setSortOrder(spSortOrder.getSelectedItem().toString());
         ArrayList<String> deskValues = new ArrayList<>();
         // TODO: refactor this series of ifs to make it more scalable
@@ -135,6 +113,39 @@ public class FilterDialogFragment extends DialogFragment implements DatePickerDi
         }
         filterSetting.setDeskValues(deskValues);
     }
+
+    private void populateUIFields() {
+        // Fetch arguments from bundle and set title
+        filterSetting = getArguments().getParcelable(ARG_FILTER_SETTING);
+
+        if (filterSetting.getSearchStr() != null) {
+            String searchStr = filterSetting.getSearchStr();
+            etSeachStr.setText(searchStr);
+            int position = searchStr.length();
+            etSeachStr.setSelection(position);
+        }
+        if (filterSetting.getBeginDateStr() != null) {
+            tvBeginDate.setText(filterSetting.getBeginDateStr());
+        }
+        if (filterSetting.getSortOrder() != null) {
+            // TODO: refactor to make it nicer
+            spSortOrder.setSelection(0, true);
+        }
+        if (filterSetting.getDeskValues() != null) {
+            for (String value : filterSetting.getDeskValues()) {
+                if (value.equals(DESK_VALUE_ARTS)) {
+                    cbArts.setChecked(true);
+                }
+                if (value.equals(DESK_VALUE_FASHION)) {
+                    cbFashion.setChecked(true);
+                }
+                if (value.equals(DESK_VALUE_SPORTS)) {
+                    cbSports.setChecked(true);
+                }
+            }
+        }
+    }
+
     @Override
     public void onResume() {
         // resize the dialog fragment to be full screen

@@ -3,14 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:windowFullscreen="true"
-    android:padding="0dp"
+    android:padding="15dp"
     tools:context=".fragments.FilterDialogFragment">
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_search_str"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/filter_fragment_vertical_margin" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/enter_begin_date"
         android:id="@+id/tv_begin_date"
+        android:layout_below="@+id/et_search_str"
         android:layout_marginTop="@dimen/filter_fragment_vertical_margin"
         android:layout_marginBottom="@dimen/filter_fragment_vertical_margin" />
 
