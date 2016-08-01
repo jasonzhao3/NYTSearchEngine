@@ -51,7 +51,6 @@ public class FilterDialogFragment extends DialogFragment implements DatePickerDi
         void onFinishFilterDialog(FilterSetting filterSetting);
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -124,13 +123,12 @@ public class FilterDialogFragment extends DialogFragment implements DatePickerDi
 
     public void showDatePickerDialog() {
         DatePickerFragment datePicker = new DatePickerFragment();
+        datePicker.setTargetFragment(FilterDialogFragment.this, 300);
         datePicker.show(getFragmentManager(), "datePicker");
     }
 
     @Override
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        // TODO: figure out why this handler is not triggered
-        Log.d("DEBUG", "FINISH setting the date");
         final Calendar c = Calendar.getInstance();
         c.set(Calendar.YEAR, year);
         c.set(Calendar.MONTH, monthOfYear);

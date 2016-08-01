@@ -18,6 +18,7 @@ import com.loopj.android.http.RequestParams;
 import com.uber.yangz.nytsearchengine.R;
 import com.uber.yangz.nytsearchengine.adapters.ArticlesAdaptor;
 import com.uber.yangz.nytsearchengine.fragments.FilterDialogFragment;
+import com.uber.yangz.nytsearchengine.lib.EndlessScrollListener;
 import com.uber.yangz.nytsearchengine.models.Article;
 import com.uber.yangz.nytsearchengine.models.FilterSetting;
 
@@ -38,6 +39,7 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogFra
 
     private ArticlesAdaptor adapter;
     private FilterSetting filterSetting;
+    private String query;
 
 
     @Override
@@ -73,7 +75,8 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogFra
                 // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
                 // see https://code.google.com/p/android/issues/detail?id=24599
                 searchView.clearFocus();
-                fetchArticles(query);
+                SearchActivity.this.query = query;
+                fetchArticles(0);
                 return true;
             }
 
@@ -85,18 +88,20 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogFra
         return super.onCreateOptionsMenu(menu);
     }
 
-    private void fetchArticles(String query) {
+    private void fetchArticles(int page) {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put(API_KEY_NAME, API_KEY_VALUE);
-        params.put("page", 0);
+        params.put("page", page);
         params.put("q", query);
         populateFilterParams(params);
+
+        final boolean needClearAdapter = page == 0;
 
         client.get(BASE_URL, params, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject res) {
-                        loadArticles(adapter, res);
+                        loadArticles(adapter, res, needClearAdapter);
                         // TODO: dismiss spinner after fetching articles
                     }
 
@@ -114,17 +119,29 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogFra
         adapter = new ArticlesAdaptor(this, articles);
         GridView gvArticles = (GridView) findViewById(R.id.gv_articles);
         gvArticles.setAdapter(adapter);
+
+        gvArticles.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to your AdapterView
+                fetchArticles(page);
+                // or customLoadMoreDataFromApi(totalItemsCount);
+                return true; // ONLY if more data is actually being loaded; false otherwise.
+            }
+        });
     }
 
-    private void loadArticles(ArticlesAdaptor adapter, JSONObject response) {
+    private void loadArticles(ArticlesAdaptor adapter, JSONObject response, boolean needClearAdapter) {
         try {
             JSONArray articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-            adapter.clear();
+            if (needClearAdapter) {
+                adapter.clear();
+            }
             adapter.addAll(Article.fromJSONArray(articleJsonResults));
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     private void populateFilterParams(RequestParams params) {
