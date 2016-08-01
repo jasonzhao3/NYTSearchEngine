@@ -2,7 +2,9 @@ package com.uber.yangz.nytsearchengine.adapters;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.uber.yangz.nytsearchengine.R;
+import com.uber.yangz.nytsearchengine.activities.ArticleDetailActivity;
 import com.uber.yangz.nytsearchengine.models.Article;
 
 import java.util.ArrayList;
@@ -33,7 +36,7 @@ public class ArticlesAdaptor extends ArrayAdapter<Article> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Article article = getItem(position);
+        final Article article = getItem(position);
         ViewHolder viewHolder;
 
         if (convertView == null) {
@@ -55,6 +58,19 @@ public class ArticlesAdaptor extends ArrayAdapter<Article> {
                     into(viewHolder.ivThumbnail);
         }
 
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchArticleWebView(article);
+            }
+        });
         return convertView;
+    }
+
+    public void launchArticleWebView(Article article) {
+        Log.d("DEBUG", "launch article web view");
+        Intent i = new Intent(getContext(), ArticleDetailActivity.class);
+        i.putExtra("url", article.getWebUrl());
+        getContext().startActivity(i);
     }
 }

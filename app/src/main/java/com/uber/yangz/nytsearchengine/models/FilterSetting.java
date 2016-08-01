@@ -39,6 +39,9 @@ public class FilterSetting {
     }
 
     public String getDeskValuesStr() {
+        if (deskValues == null) {
+            return "";
+        }
         return "news_desk:(\"" + TextUtils.join("\" \"", deskValues) + "\")";
     }
 
